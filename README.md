@@ -17,3 +17,9 @@ An n8n-based system that utilizes the HN API, JavaScript, Gemini, SQLite, and th
 3. Deduplication and Persistent Storage: All processed IDs are stored in SQLite to prevent duplicate classification and publishing in future runs.
 
 4. Automated Publishing: Curated articles are formatted into rich Discord embeds and posted.
+
+## Screenshot of Discord
+
+<p align="center">
+<img width="508" height="697" alt="image" src="https://github.com/user-attachments/assets/e5525354-cfd5-4471-86ad-863f8fd5abbb" />
+</p>
