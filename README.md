@@ -3,4 +3,4 @@ An n8n-based system that utilizes the HN API, JavaScript, Gemini, SQLite, and th
 
 
 ## Workflow Diagram
-<img width="687" height="678" alt="image" src="https://github.com/user-attachments/assets/ee153e80-50a2-4114-ad07-5bba33859bc1" />
+<img width="702" height="674" alt="image" src="https://github.com/user-attachments/assets/a3a5274b-bc4a-4736-aef2-77ee6b00a5d3" />
