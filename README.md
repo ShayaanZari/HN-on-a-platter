@@ -1,7 +1,7 @@
 # HN on a Platter
 An n8n-based system that utilizes the HN API, JavaScript, Gemini, SQLite, and the Discord API to publish articles of interest to me in a Discord channel.
 
-**Goal**: Use an LLM to routinely classify and share math, or physics related articles from Hacker news to a dedicated Discord channel in beautiful embeds.
+**Goal**: Use an LLM to routinely classify and share math or physics related articles from Hacker news to a dedicated Discord channel in beautiful embeds.
 
 ## Workflow Diagram
 <p align="center">
