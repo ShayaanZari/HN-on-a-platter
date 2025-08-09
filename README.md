@@ -23,3 +23,8 @@ An n8n-based system that utilizes the HN API, JavaScript, Gemini, SQLite, and th
 <p align="center">
 <img width="508" height="697" alt="image" src="https://github.com/user-attachments/assets/e5525354-cfd5-4471-86ad-863f8fd5abbb" />
 </p>
+
+## Future Improvements
+- Placing an "glance" at the article in the embed. if it's a paper, then its abstract. If it's an open article, then the blurb. But the cases diverge. If it's a blog, often the first couple lines contains a quote or a look at what's coming. If it's a noble prize announcement, the first couple lines will announce who the prize is being awarded to and for what. And so on. There might be a way for an LLM to do this intelligently instead of hardcoding different variations.
+- Embedding the first picture in the URL. Requires less intelligence than the above.
+- List of big ideas/tags/keywords of the article, kind of like an expanded title. This could be naive word counting or intelligent context analysis.
