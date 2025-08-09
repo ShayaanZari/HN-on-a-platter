@@ -4,7 +4,9 @@ An n8n-based system that utilizes the HN API, JavaScript, Gemini, SQLite, and th
 **Goal**: Use an LLM to routinely classify and share math, or physics related articles from Hacker news to a dedicated Discord channel in beautiful embeds.
 
 ## Workflow Diagram
+<p align="center">
 <img width="720" height="692" alt="image" src="https://github.com/user-attachments/assets/402ae257-734d-4f6a-9fde-f5debdb39fc4" />
+</p>
 
 ## Explanation
 
