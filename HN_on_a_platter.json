@@ -1,0 +1,528 @@
+{
+  "name": "HN-on-a-platter",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        340,
+        220
+      ],
+      "id": "191b731c-a57b-4c6b-a9b1-701a5f485849",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        160,
+        320
+      ],
+      "id": "bd4bdc5b-cd29-4152-ae1f-33ce900cfa63",
+      "name": "Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "JHbCIpuvGS0OTqa9",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "database": "/dockervol/data/hn_ids.db",
+        "table": "seen_ids",
+        "columns": "id"
+      },
+      "type": "n8n-nodes-sqlite.sqlite",
+      "typeVersion": 1,
+      "position": [
+        620,
+        620
+      ],
+      "id": "cf5c3762-0381-45e4-b242-37d812382b6e",
+      "name": "Insert processed IDs",
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "database": "/dockervol/data/hn_ids.db",
+        "operation": "executeQuery",
+        "query": "=SELECT value AS id\nFROM json_each('[{{ $json.id_list }}]')\nWHERE value NOT IN (\n    SELECT id FROM seen_ids\n);"
+      },
+      "type": "n8n-nodes-sqlite.sqlite",
+      "typeVersion": 1,
+      "position": [
+        520,
+        -80
+      ],
+      "id": "2d1d81e7-8212-47d4-b01b-fe04b33fba74",
+      "name": "Filter previously processed stories"
+    },
+    {
+      "parameters": {
+        "content": "The Discord node takes timestamps in ISO 8601 form, but the HN API gives it in Unix time. This node multiplies by 1000, then converts to an ISO 8601 formatted string. [Source](https://n8n.io/workflows/4623-unix-timestamp-to-iso-date-converter/)",
+        "height": 140,
+        "width": 300
+      },
+      "id": "f1002ca8-953a-45b2-8b57-b7da64e94047",
+      "name": "Note: Conversion Logic",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -100,
+        700
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b81b1aeb-c979-4501-8c6b-0dad6893f4ad",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "True",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        620,
+        280
+      ],
+      "id": "bc4212fc-1549-42c9-88ca-215440f3f4e0",
+      "name": "Filter interested articles"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "597620643621765130",
+          "mode": "list",
+          "cachedResultName": "test server",
+          "cachedResultUrl": "https://discord.com/channels/597620643621765130"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "597620643621765132",
+          "mode": "list",
+          "cachedResultName": "general",
+          "cachedResultUrl": "https://discord.com/channels/597620643621765130/597620643621765132"
+        },
+        "options": {},
+        "embeds": {
+          "values": [
+            {
+              "description": "This was sent from n8n :3",
+              "author": "={{ $json.by }}",
+              "color": "#FF0BCA",
+              "timestamp": "={{ $json.time }}",
+              "title": "={{ $json.title }}",
+              "url": "={{ $json.url }}",
+              "image": "https://raw.githubusercontent.com/ShayaanZari/HN-on-a-platter/refs/heads/main/embed_image2.jpeg"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        300,
+        540
+      ],
+      "id": "9f6a7e2a-2f49-4ce9-b16e-017ee4b22c2e",
+      "name": "Publish to Discord",
+      "webhookId": "ddf571a4-baa0-4f5c-9ba5-f05b0ffbf9f8",
+      "credentials": {
+        "discordBotApi": {
+          "id": "GniFzq4aFqB1Z7SY",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Fetching and pre-processing",
+        "height": 240,
+        "width": 1000
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        -140
+      ],
+      "id": "6e5f37bd-ae63-48ae-a13c-9eee18890f6c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "url": "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        120,
+        -80
+      ],
+      "id": "0f93c2ee-ec2c-4efd-8d5f-ed6e62ceb3d9",
+      "name": "Fetch HN article IDs"
+    },
+    {
+      "parameters": {
+        "jsCode": "// slice first 30 (frontpage)\nlet ids = $input.all().slice(0,30)\n\n// list comprehension containing each id, joined into a string\nlet arr = ids.map(item => item.json).join(',')\n\n// returning a json object containing a string\nreturn [{\n  id_list: arr\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        -40
+      ],
+      "id": "49b173a6-1af2-443a-95f7-cf77c595f1f5",
+      "name": "Select frontpage 30"
+    },
+    {
+      "parameters": {
+        "url": "=https://hacker-news.firebaseio.com/v0/item/{{ $json[\"id\"] }}.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        -60
+      ],
+      "id": "273114fc-9a44-472b-96df-14db7b6c02e2",
+      "name": "Retrieve article metadata",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "content": "## Classification of interest",
+        "height": 300,
+        "width": 400,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        140
+      ],
+      "id": "7365af20-1669-4cf1-a4e0-195cb8830b01",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Filtering out uninteresting articles",
+        "height": 300,
+        "width": 560,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        320,
+        140
+      ],
+      "id": "5afdde29-ce29-4207-9229-13c88d70e4ad",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "The IDs of all classified articles are inserted into the database, so the same article is not classified twice.",
+        "height": 360,
+        "width": 320,
+        "color": 3
+      },
+      "id": "94f1672d-658c-4442-9c1f-1096e11504fc",
+      "name": "Note: Conversion Logic1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        560,
+        480
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "Publish Embed to Discord, specifying title, poster, post date, and URL.",
+        "height": 80,
+        "width": 210
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        280,
+        700
+      ],
+      "id": "1a6eb8dd-82be-4e66-8c1a-32ae79abe706",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Format and Publish",
+        "height": 360,
+        "width": 640
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        480
+      ],
+      "id": "5f42b372-efb6-46c7-a070-99b35a0d55c6",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "abee5f57-0a14-4069-9d95-084781a0eb0a",
+              "name": "by",
+              "value": "={{ $json.by }}",
+              "type": "string"
+            },
+            {
+              "id": "140095d9-4139-4934-b5ad-25d2296d2c11",
+              "name": "score",
+              "value": "={{ $json.score }}",
+              "type": "number"
+            },
+            {
+              "id": "f96b5b9b-936e-4abb-bf4d-41a1f71a86ef",
+              "name": "time",
+              "value": "={{ new Date($json.time * 1000).toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "0189faee-1dd1-45b6-9901-601edbf4c693",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "1946a1ce-1a03-490e-8722-b1eb6661e4e9",
+              "name": "url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1387f5e4-fa74-4072-b32f-3d5e2c92ee12",
+      "name": "Format Time",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -100,
+        540
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an expert material curator specializing in STEM. Your task is to classify titles that are related to the fields of math or physics. You must respond with only one of two possible classifications: \"True\" if the title is related to math or physics, or \"False\" if not.\n\nInput: Title \"A new proof for Fermat's Last Theorem\"\nOutput: True\n\nInput: Title \"Simulating Quantum Entanglement with a Classical Computer\"\nOutput: True\n\nInput: Title \"Designing an AI Model to Calculate Optimal Traffic Light Timings\"\nOutput: 789\n\nInput: Title \"YC's 2025 batch\nOutput: False\n\nInput: Title \"Writing a storage engine for Postgres\nOutput: False\n\nInput: Title \"SpaceX Tests Reusable Rocket Landing in High Winds\"\nOutput: False\n\nInput: Title {{ $json.title }}\nOutput:"
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.6,
+      "position": [
+        -100,
+        200
+      ],
+      "id": "0d7182c3-e228-4c73-8de0-76da1656401c",
+      "name": "Classification LLM"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -100,
+        -60
+      ],
+      "id": "bddbbdfa-b63a-479b-891c-771a75116bcb",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gemini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classification LLM",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Insert processed IDs",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter interested articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert processed IDs": {
+      "main": [
+        []
+      ]
+    },
+    "Filter previously processed stories": {
+      "main": [
+        [
+          {
+            "node": "Retrieve article metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter interested articles": {
+      "main": [
+        [
+          {
+            "node": "Format Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Publish to Discord": {
+      "main": [
+        []
+      ]
+    },
+    "Fetch HN article IDs": {
+      "main": [
+        [
+          {
+            "node": "Select frontpage 30",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select frontpage 30": {
+      "main": [
+        [
+          {
+            "node": "Filter previously processed stories",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve article metadata": {
+      "main": [
+        [
+          {
+            "node": "Classification LLM",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Time": {
+      "main": [
+        [
+          {
+            "node": "Publish to Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classification LLM": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch HN article IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "33494858-ab14-4431-acf6-d94d0bf3f60b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8cb7a615c7635810b618d7c74f83b191d5229fa84aac69a6ba6d773b9bf0a75e"
+  },
+  "id": "LzddBL0HEcHTk7P0",
+  "tags": []
+}
