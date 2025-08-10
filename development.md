@@ -98,7 +98,8 @@ I utilized several new pieces of knowledge at this step:
 ### Prompt
 A straightforward few-shot classification prompt.
 
-```You are an expert material curator specializing in STEM. Your task is to classify titles that are related to the fields of math, physics, algorithms, algorithmic aspects of AI, or robotics. You must respond with only one of two possible classifications: "True" if the title is related to the above fields, or "False" if not.
+```
+You are an expert material curator specializing in STEM. Your task is to classify titles that are related to the fields of math, physics, algorithms, algorithmic aspects of AI, or robotics. You must respond with only one of two possible classifications: "True" if the title is related to the above fields, or "False" if not.
 
 Input: "A new proof for Fermat's Last Theorem"
 Output: True
