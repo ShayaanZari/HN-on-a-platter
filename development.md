@@ -90,5 +90,21 @@ Experiments showed that the Agent/LLM Chain nodes won't append an output of "tru
 I utilized several new pieces of knowledge at this step:
 - The LLM Chain node is a simpler version of the Agent. It has no tools and, according to ChatGPT, uses fewer tokens as a result.
 - Splitting data into two equivalent streams. It can't be done with the + button, but by grabbing the circle at the edge of the node.
-- The Merge node uses n8n's consistent item ordering. Mode: Combine, Combine By: Position, Number of Inputs: 2
+- The Merge node can utilize n8n's consistent item ordering to combine by position.
 	- Originally, I was trying to pass along the ID into the prompt in order to index via ID later. The Merge node could probably do that too, but the LLM couldn't return ID as a key since everything it returns is embedded in the `text` key, requiring string parsing.
+
+## Updating the Database
+
+1. Schema
+In the original design, only **interested**, **not-published-before** articles reach the end of the workflow where they inserted to the DB, Uninterested, not-published-before articles will be have to be reclassified as uninterested.
+
+The clear solution to this is to redefine the database to hold all classified IDs. That is, insert all IDs into the database after classification so no classified ID will pass through the filter node.
+
+2. Insertion of IDs
+This is done right after the merge, when the IDs that have been classified have been met with their classifications. It could happen right after retrieving the info, or right after filtering, but it's a better design to do it after they've actually been classified. Though, I haven't added any error handling at this point.
+
+## Discord Publishing
+I had already made a Discord bot in an old project, and the actual Discord setup in n8n was very straightforward. The only hitch I encountered was that it wanted the timestamp in ISO 8601 format, while the HN API gave it in Unix/Epoch. Some googling revealed the solution to this:
+```JS
+{{ new Date($json.time * 1000).toISOString() }}
+```
