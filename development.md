@@ -81,6 +81,8 @@ WHERE value NOT IN (
 Also note that for n8n (self-hosted on laptop / later Raspberry Pi) to interact with a database (on device), the database must be placed in a mapped Docker volume, and the `node` user of the Docker container must be given read and write access to the directory containing the database.
 
 ## Classification
+
+### Flow
 Experiments showed that the Agent/LLM Chain nodes won't append an output of "true" or "false" to the input JSON. It is a clear waste of tokens to give all the metadata in the prompt. So instead, I gave only the title to the LLM and then used the Merge node to put it together with the corresponding metadata.
 
 <p align=center>
@@ -92,6 +94,33 @@ I utilized several new pieces of knowledge at this step:
 - Splitting data into two equivalent streams. It can't be done with the + button, but by grabbing the circle at the edge of the node.
 - The Merge node can utilize n8n's consistent item ordering to combine by position.
 	- Originally, I was trying to pass along the ID into the prompt in order to index via ID later. The Merge node could probably do that too, but the LLM couldn't return ID as a key since everything it returns is embedded in the `text` key, requiring string parsing.
+
+### Prompt
+A straightforward few-shot classification prompt.
+
+```You are an expert material curator specializing in STEM. Your task is to classify titles that are related to the fields of math, physics, algorithms, algorithmic aspects of AI, or robotics. You must respond with only one of two possible classifications: "True" if the title is related to the above fields, or "False" if not.
+
+Input: "A new proof for Fermat's Last Theorem"
+Output: True
+
+Input: "Simulating Quantum Entanglement with a Classical Computer"
+Output: True
+
+Input: "Designing an AI Model to Calculate Optimal Traffic Light Timings"
+Output: True
+
+Input: "YC's 2025 batch"
+Output: False
+
+Input: "Writing a storage engine for Postgres"
+Output: False
+
+Input: "How can ChatGPT serve 700M users when I can't run one GPT-4 locally?"
+Output: False
+
+Input: Title {{ $json.title }}
+Output:
+```
 
 ## Updating the Database
 
