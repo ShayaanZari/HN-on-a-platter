@@ -86,3 +86,9 @@ Experiments showed that the Agent/LLM Chain nodes won't append an output of "tru
 <p align=center>
 <img width="673" height="357" alt="Screenshot from 2025-08-09 11-47-47" src="https://github.com/user-attachments/assets/18e46ba7-0744-4a3f-b5c0-1a41f0b2bc52" />
 </p>
+
+I utilized several new pieces of knowledge at this step:
+- The LLM Chain node is a simpler version of the Agent. It has no tools and, according to ChatGPT, uses fewer tokens as a result.
+- Splitting data into two equivalent streams. It can't be done with the + button, but by grabbing the circle at the edge of the node.
+- The Merge node uses n8n's consistent item ordering. Mode: Combine, Combine By: Position, Number of Inputs: 2
+	- Originally, I was trying to pass along the ID into the prompt in order to index via ID later. The Merge node could probably do that too, but the LLM couldn't return ID as a key since everything it returns is embedded in the `text` key, requiring string parsing.
