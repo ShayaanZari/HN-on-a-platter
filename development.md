@@ -42,19 +42,26 @@ Before sending it as input to the next node, n8n wraps each primitive as its own
 
 ### Solution
 
-To my knowledge, only Code nodes can take improper input. We already need one to slice the 30 top IDs, so I placed the formatting code in the same node.
+To my knowledge, only Code nodes can take improper input. We already need one to slice the 30 top IDs, so I placed the formatting code in the same node. I returned a single JSON object containing a single String primitive holding the IDs as a comma-separated list.
 
 ```JS
 // slice first 30 (frontpage)
 let ids = $input.all().slice(0,30)
 
-// list comprehension containing each id, joined into a string. The format the SQLite Insert query accepts. 
+// list comprehension containing each id, joined into a string. 
 let arr = ids.map(item => item.json).join(',')
 
 // returning a json object containing a string
 return [{
   id_list: arr
 }];
+```
+
+If it were a typical node (not SQLite) taking this input, I would simply return an array of objects each containing an ID:
+
+```JS
+let ids = $input.all().slice(0,30)
+return ids.map(item => ({ id: item.json} ));
 ```
 
 ## SQLite ID Filter
