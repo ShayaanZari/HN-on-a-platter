@@ -38,7 +38,7 @@ Before sending it as input to the next node, n8n wraps each primitive as its own
 ];
 ```
 
-4. The node which needs the IDs is the SQLite filter node, which won't accept this input.
+4. The node which needs the IDs is the SQLite filter node, which needs the IDs in a comma-separated list.
 
 ### Solution
 
