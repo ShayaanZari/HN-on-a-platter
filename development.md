@@ -68,6 +68,7 @@ return ids.map(item => ({ id: item.json} ));
 After the 30 IDs are passed properly, next is to filter out previously processed IDs. I do this by creating a temporary table. 
 - The `json_each()` function is a table-valued function that returns a set of rows, each representing an element in the input JSON object/array.
 - We create a temporary table by using `json_each()` on the id list after converting it into a JSON array (and then a string)
+
 Select all values (call the values ID to maintain consistency in n8n) from the temporary table created from the input list of IDs, that are not values in the database.
 
 ```SQL
