@@ -133,7 +133,7 @@ The clear solution to this is to redefine the database to hold all classified ID
 
 2. Insertion of IDs
 
-This is done right after the merge, when the IDs that have been classified have been met with their classifications. It could happen right after retrieving the info, or right after filtering, but it's a better design to do it after they've actually been classified. Though, I haven't added any error handling at this point.
+This is done right after the merge, when the IDs that have been classified have been met with their classifications. It could happen right after retrieving the info, or right after filtering, but it's a more robust design choice to do it after they've actually been classified. Though, I haven't added any error handling at this point.
 
 ## Discord Publishing
 I had already made a Discord bot in an old project, and the actual Discord setup in n8n was very straightforward. The only hitch I encountered was that it wanted the timestamp in ISO 8601 format, while the HN API gave it in Unix/Epoch. Some googling revealed the solution to this:
