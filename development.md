@@ -96,11 +96,13 @@ I utilized several new pieces of knowledge at this step:
 ## Updating the Database
 
 1. Schema
+
 In the original design, only **interested**, **not-published-before** articles reach the end of the workflow where they inserted to the DB, Uninterested, not-published-before articles will be have to be reclassified as uninterested.
 
 The clear solution to this is to redefine the database to hold all classified IDs. That is, insert all IDs into the database after classification so no classified ID will pass through the filter node.
 
 2. Insertion of IDs
+
 This is done right after the merge, when the IDs that have been classified have been met with their classifications. It could happen right after retrieving the info, or right after filtering, but it's a better design to do it after they've actually been classified. Though, I haven't added any error handling at this point.
 
 ## Discord Publishing
