@@ -95,7 +95,7 @@ I utilized several new pieces of knowledge at this step:
 
 ## Updating the Database
 
-1. Schema
+1. Redefinition of Schema
 
 In the original design, only **interested**, **not-published-before** articles reach the end of the workflow where they inserted to the DB, Uninterested, not-published-before articles will be have to be reclassified as uninterested.
 
